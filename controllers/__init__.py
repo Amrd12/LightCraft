@@ -1,0 +1,1 @@
+from configs.app_strings import appStrings
