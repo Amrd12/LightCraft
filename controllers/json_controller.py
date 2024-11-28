@@ -8,22 +8,26 @@ from models.img_model import ImgModel
 class JsonController:
     data: json
 
-    imgsList: list[ImgModel]
-
+    imgsList: list[ImgModel] =[]
+    
     def __init__(self):
         self.file_path = path.join(path.dirname(__file__), appStrings.jsonfile)
         self.check()
+        self.save()
+        self.updateList
+        print(self.imgsList)
+
+    def updateList(self):
         with open(self.file_path, "r") as file:
             self.data = json.loads(file.read())
-        self.imgsList =[ ImgModel.from_json(i) for i in self.data["imgspath"] ]
-        print(self.imgsList)
+        self.imgsList =[ImgModel.from_json(i) for i in self.data[appStrings.imgPath] if path.exists(i[appStrings.imgPath])]
 
     def check(self):
         if not path.exists(self.file_path):
             self.data = {
-            "firstTime" : True,
-            "darkmood" : True,
-            "imgspath" : []
+            appStrings.isfirstTime : True,
+            appStrings.isDarkMood : True,
+            appStrings.imgPath : []
                     }
             self.save()
 
@@ -32,10 +36,23 @@ class JsonController:
             if(i == imgModel):
                 return
         self.imgsList.append(imgModel)
-        self.data["imgspath"] : list = [e.to_json() for e in self.imgsList]
         self.save()
     
     def save(self):
-         with open(self.file_path, "w") as file:
+        self.data["imgspath"]  = [e.to_json() for e in self.imgsList]
+        with open(self.file_path, "w") as file:
                 file.write(json.dumps(self.data,indent=2))
 
+    def darkMood(self , isdarkMood:bool):
+        if( self.data["darkmood"] == isdarkMood):
+            return
+        self.data["darkmood"] = isdarkMood
+        self.save()
+
+    def firstTime(self , firstTime:bool):
+        if( self.data["firstTime"] == firstTime):
+            return
+        self.data["firstTime"] = firstTime
+        self.save()
+
+jsonController :JsonController = JsonController()

@@ -1,14 +1,16 @@
 {
-  "firstTime": true,
-  "darkmood": true,
+  "isfirsttime": true,
+  "isdarkmood": true,
+  "imgPath": [
+    {
+      "imgName": "wallpaperflare.com_wallpaper (9).jpg",
+      "imgPath": "D:/all/Downloads/wallpapers/wallpaperflare.com_wallpaper (9).jpg"
+    }
+  ],
   "imgspath": [
     {
-      "imgName": "wallpaperflare.com_wallpaper (15)",
-      "imgPath": "D:/all/Downloads/wallpapers/wallpaperflare.com_wallpaper (15).jpg"
-    },
-    {
-      "imgName": "amr",
-      "imgPath": "feaf"
+      "imgName": "wallpaperflare.com_wallpaper (9).jpg",
+      "imgPath": "D:/all/Downloads/wallpapers/wallpaperflare.com_wallpaper (9).jpg"
     }
   ]
 }

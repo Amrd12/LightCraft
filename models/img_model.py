@@ -3,8 +3,10 @@ import json
 
 @dataclass
 class ImgModel:
+    
     imgPath:str
     imgName:str
+
     def __str__(self):
         return json.dumps({"imgName" : self.imgName , "imgPath" : self.imgPath} , indent=2)
     
