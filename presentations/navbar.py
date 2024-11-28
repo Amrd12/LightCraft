@@ -20,4 +20,5 @@ class NavBarWidget(CTkFrame):
             corner_radius=10,
             width=60
         )
+        print()
 
