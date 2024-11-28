@@ -39,7 +39,7 @@ class JsonController:
         self.save()
     
     def save(self):
-        self.data["imgspath"]  = [e.to_json() for e in self.imgsList]
+        self.data[appStrings.imgPath]  = [e.to_json() for e in self.imgsList]
         with open(self.file_path, "w") as file:
                 file.write(json.dumps(self.data,indent=2))
 
