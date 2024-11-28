@@ -7,7 +7,6 @@ from models.img_model import ImgModel
 #controller
 from controllers.windows_controller import WindowsController , windowsController
 
-
 class MainFramWidget(ctk.CTkFrame):
 
     appColor : AppColors  = appColors
@@ -15,7 +14,7 @@ class MainFramWidget(ctk.CTkFrame):
     windowsController : WindowsController = windowsController
 
     def __init__(self , *args, **kwargs):
-
+        
         super().__init__(
             *args,
             **kwargs,
@@ -23,4 +22,6 @@ class MainFramWidget(ctk.CTkFrame):
             bg_color=self.appColor.color5,
             corner_radius=10,
         )
+
+    
     
