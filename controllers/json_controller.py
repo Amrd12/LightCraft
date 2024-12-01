@@ -8,13 +8,13 @@ from models.img_model import ImgModel
 class JsonController:
     data: json
 
-    imgsList: list[ImgModel] =[]
+    imgsList: list[ImgModel] =  []
     
     def __init__(self):
         self.file_path = path.join(path.dirname(__file__), appStrings.jsonfile)
         self.check()
+        self.updateList()
         self.save()
-        self.updateList
         print(self.imgsList)
 
     def updateList(self):
@@ -39,7 +39,8 @@ class JsonController:
         self.save()
     
     def save(self):
-        self.data[appStrings.imgPath]  = [e.to_json() for e in self.imgsList]
+        if len(self.imgsList) ==0:
+             self.data[appStrings.imgPath]  = [e.to_json() for e in self.imgsList]
         with open(self.file_path, "w") as file:
                 file.write(json.dumps(self.data,indent=2))
 

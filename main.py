@@ -7,6 +7,7 @@ from presentations.main_frame import MainFramWidget
 
 #Controllers
 from controllers.json_controller import JsonController
+from controllers.windows_controller import *
 #models
 from models.img_model import ImgModel
 #imports
@@ -17,13 +18,15 @@ from tkinterdnd2 import TkinterDnD, DND_ALL
 
 class MainApp(ctk.CTk, TkinterDnD.DnDWrapper):
     jsonController : JsonController = JsonController()
-
+    windowsController : WindowsController = WindowsController()
+    
     appColor : AppColors  = appColors
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.appColor.mood(isDarkMood=self.jsonController.data[appStrings.isDarkMood])
+        
         self.TkdndVersion = TkinterDnD._require(self)
         self.config(background = self.appColor.color5)
 
