@@ -18,6 +18,7 @@ from tkinterdnd2 import TkinterDnD, DND_ALL
 
 class MainApp(ctk.CTk, TkinterDnD.DnDWrapper):
     jsonController : JsonController = JsonController()
+
     windowsController : WindowsController = WindowsController()
     
     appColor : AppColors  = appColors
@@ -85,4 +86,4 @@ if __name__ == "__main__":
 
     app = MainApp()
     app.mainloop()
-    print("kareem")
+    print("karem")
