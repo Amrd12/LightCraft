@@ -1,15 +1,18 @@
 #configs
 from configs.app_colors import AppColors , appColors
 from configs.app_strings import appStrings
+
 #widgets
 from presentations.navbar import NavBarWidget
 from presentations.main_frame import MainFramWidget
+from presentations.widgets.editing_screen import EditingScreen 
 
 #Controllers
 from controllers.json_controller import JsonController
-from controllers.windows_controller import *
+
 #models
 from models.img_model import ImgModel
+
 #imports
 import os
 import customtkinter as ctk
@@ -19,17 +22,18 @@ from tkinterdnd2 import TkinterDnD, DND_ALL
 class MainApp(ctk.CTk, TkinterDnD.DnDWrapper):
     jsonController : JsonController = JsonController()
 
-    windowsController : WindowsController = WindowsController()
     
     appColor : AppColors  = appColors
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    opendItems : list[ImgModel] =[]
 
-        self.appColor.mood(isDarkMood=self.jsonController.data[appStrings.isDarkMood])
-        
+    mainFramWidget : MainFramWidget
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs ,fg_color = self.appColor.color5)
+        ctk.set_appearance_mode(  "dark" if self.jsonController.darkMood == True else "light")
         self.TkdndVersion = TkinterDnD._require(self)
-        self.config(background = self.appColor.color5)
+
 
         # Set up the main window
         self.title("Light Craft")
@@ -51,36 +55,85 @@ class MainApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self.rowconfigure(0 ,weight=1)
 
         # create the nav bar 
-        navbar = NavBarWidget(self )
+        self.navbar = NavBarWidget(master=self ,opendItems=self.opendItems , openImage=self.openImage , mood= self.mood )#call ChangeMainFrame from here
 
-        navbar.grid(row = 0 ,column = 0 ,sticky = "nsw" , pady=15 ,padx=[15,10])
+        self.navbar.grid(row = 0 ,column = 0 ,sticky = "nsw" , pady=15 ,padx=[15,10])
 
-        navbar2 = MainFramWidget(self  )
+        self.mainFramWidget = MainFramWidget(master = self , imagesList= self.jsonController.imgsList)
+        self.mainFramWidget.grid(row = 0 ,column = 1 ,sticky = "nswe" , pady=15 ,padx=[10,15])
 
-        navbar2.grid(row = 0 ,column = 1 ,sticky = "nswe" , pady=15 ,padx=[10,15])
+    def openImage(self, img: ImgModel):
+        if img is None:
+            # Restore the main frame and remove any EditingScreen
+            for widget in self.grid_slaves(row=0, column=1):
+                if isinstance(widget, EditingScreen):
+                    widget.grid_forget()
+            self.mainFramWidget.grid(row=0, column=1, sticky="nswe", pady=15, padx=[10, 15])
+        else:
+            # Check if an EditingScreen for this image already exists
+            for widget in self.grid_slaves(row=0, column=1):
+                if isinstance(widget, EditingScreen) and widget.image == img:
+                    widget.grid(row=0, column=1, sticky="nswe", pady=15, padx=[10, 15])
+                    return
 
-    def get_path(self, event):
-        """Handles file drop events."""
-        file_path : str =  event.data 
+            # Hide the main frame and create a new EditingScreen
+            self.mainFramWidget.grid_forget()
+            self.addToList(img=img)
+            editing_screen = EditingScreen(master = self, image=img)
+            editing_screen.grid(row=0, column=1, sticky="nswe", pady=15, padx=[10, 15])
+
+
+    def addToList(self,img :ImgModel):
+        """
+        Add A Tab To the nav bar 
+        """
+        self.navbar.opendItems.append(img)
+        
+        self.navbar.refresh()
+
+    def removeFromList(self, img:ImgModel):
+        """
+        remove Tab from the nav bar 
+        """
+        self.opendItems.remove(img)
+        self.navbar.refresh()
+
+    def get_path(self, event  ):
+        file_path: str = event if type(event) == str else event.data
         if file_path.startswith("{"):
-            file_path =file_path[1:-1]
+            file_path = file_path[1:-1]
 
         if os.path.isfile(file_path):
-            # self.label.configure(text=f"Processing: {file_path}")
-            # Example integration with your ImgModel and JsonController
             try:
-                # Uncomment these lines if you have these modules available
+                # Create an ImgModel and save it
                 img = ImgModel(file_path, os.path.basename(file_path))
                 self.jsonController.saveImg(imgModel=img)
-                # self.label.configure(text=f"File processed and saved: {file_path}")
-
-            except Exception as e:
-                print(file_path , "not file\n" ,e)
-                # self.label.configure(text=f"Error: {e}")
-                pass
+                
+                # Add the image to the navbar list
+                self.openImage(img)
+                # self.mainFramWidget.imagesList.append(img)
+                # self.mainFramWidget.refresh()
+                # Open the image for editing
+                # self.openImage(img)
+            except Exception as e:  
+                print(f"Error processing file {file_path}: {e}")
         else:
-            pass
-            # self.label.configure(text="Invalid file. Please drop a valid file.")
+            print("Invalid file. Please drop a valid file.")
+
+    def mood(self):
+        """
+        Toggles the app's mood (dark/light mode) and updates the UI accordingly.
+
+        :param is_dark: Boolean indicating whether the dark mode is active.
+        """
+        isdark = self.jsonController.darkMood
+
+        self.jsonController.darkMood = not isdark
+
+        ctk.set_appearance_mode(mode_string="dark" if not isdark else "light")
+    
+            
+
 
 if __name__ == "__main__":
 
