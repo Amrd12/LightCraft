@@ -21,7 +21,8 @@ class JsonController:
         with open(self.file_path, "r") as file:
             filelines = file.read().replace("\n" , "")
             self.data = json.loads(filelines)
-        self.imgsList =[ImgModel.from_json(i) for i in self.data[appStrings.imgPath] if path.exists(i[appStrings.imgPath])]
+        self.imgsList =[ImgModel.from_json(i) for i in self.data[appStrings.imgPath] if path.exists(i[appStrings.imgPath]) ]
+
 
     def check(self):
         if not path.exists(self.file_path):

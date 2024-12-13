@@ -24,7 +24,7 @@ class EditingScreen(ctk.CTkFrame):
 
         self.create_label()
         self.show_image()
-
+        self.controlls()
     def create_label(self):
             closeLight = Image.open(appStrings.closeLight)
             closeDark = Image.open(appStrings.closeDark)
@@ -58,7 +58,7 @@ class EditingScreen(ctk.CTkFrame):
 
     def bg_resizer(self, event):
         """Resize and update the image when the canvas is resized."""
-        # print(event.width , event.height)
+        print(event.width , event.height)
         self.canvasRachio = event.width / event.height
 
         if self.canvasRachio > self.imgRachio : #canvas is wider than the image
@@ -72,7 +72,12 @@ class EditingScreen(ctk.CTkFrame):
         img = self.img.resize(size=(width ,height))
         self.imgp  = ImageTk.PhotoImage(img)
         self.canvas.create_image(int( event.width/2 ),int(event.height /2)  , image = self.imgp , anchor = "center"  )
-
+  
+    def controlls(self):
+        self.frame = ctk.CTkFrame(self , fg_color=self.appColor.color4,
+            corner_radius=10,
+            width=60) 
+        self.frame.grid(row= 1 , column =1 ,sticky="NSEW"  )
     
     def _set_appearance_mode(self, mode_string):
         # color = 0 

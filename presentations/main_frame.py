@@ -38,7 +38,9 @@ class MainFramWidget(ctk.CTkFrame):
         lbrec.grid(row=1, column=0, sticky="w", padx=10, pady=10)
 
         # Create the container for images and make it expand to take remaining space
-        self.imagesContainer = ctk.CTkFrame(self, fg_color=self.appColor.color5,
+        self.imagesContainer = ctk.CTkScrollableFrame(self, fg_color=self.appColor.color5
+        ,scrollbar_button_color	= self.appColor.color4,
+        scrollbar_button_hover_color =  self.appColor.color4,
             bg_color=self.appColor.color5,corner_radius=10)
         
         # Use grid to take remaining space
@@ -70,6 +72,7 @@ class MainFramWidget(ctk.CTkFrame):
 
     def createIMgsWidget(self):
         container_width = self.master.winfo_width()
+        self.imagesList = self.master.jsonController.imgsList
         if len(self.imagesList) == 0:
             for i  in self.imagesContainer.grid_slaves():
                 i.grid_forget()
@@ -95,7 +98,7 @@ class MainFramWidget(ctk.CTkFrame):
         image_width = 200
 
         # Calculate the number of columns based on the container width
-        num_columns = max(container_width // image_width, 4)  # Ensure at least 4 columns
+        num_columns = 3#max(container_width // image_width, 3)  # Ensure at least 4 columns
         if self.num_columns == num_columns : return
         row = 0
         print("Number of items per row", num_columns)
@@ -105,11 +108,14 @@ class MainFramWidget(ctk.CTkFrame):
             widget.destroy()
 
         # Create new image widgets based on the updated layout
+        row = 0  # Start at the first row
         for index, img in enumerate(self.imagesList):
             newimg = ImageWidget(master=self.imagesContainer, image=img)
 
             # Calculate the row and column positions
-            row = index // num_columns   # Calculate row based on how many images fit in each row
-            col = index % num_columns    # Calculate column based on the current row
-
+            col = index % num_columns   # Column is determined by the index modulo the number of columns
+            if col == 0 and index != 0:  # Increment row when a new row starts (after every num_columns images)
+                row += 1
+            print( row,col)
             newimg.grid(row=row, column=col, padx=5, pady=5)
+
